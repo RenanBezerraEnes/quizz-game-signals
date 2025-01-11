@@ -1,10 +1,14 @@
-import { computed, Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import { QuestionInterface } from '../types/question.interface';
 import { sign } from 'crypto';
+import { map, Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { BackendQuestionInterface } from '../types/backendQuestion.interface';
 
 @Injectable({ providedIn: 'root' })
 export class QuizzService {
-  questions = signal<QuestionInterface[]>(this.getMockQuestions());
+  http = inject(HttpClient);
+  questions = signal<QuestionInterface[]>([]);
   currentQuestionIndex = signal<number>(0);
 
   currentAnswer = signal<string | null>(null);
@@ -37,12 +41,6 @@ export class QuizzService {
       .map((a) => a.value);
   }
 
-  goToPreviousQuestion() {
-    if (!this.isAtFirstQuestion()) {
-      this.currentQuestionIndex.set(this.currentQuestionIndex() - 1);
-    }
-  }
-
   goToNextQuestion() {
     const currentQuestionIndex = this.showResults()
       ? this.currentQuestionIndex()
@@ -66,70 +64,27 @@ export class QuizzService {
     this.currentQuestionIndex.set(0);
   }
 
-  getMockQuestions(): QuestionInterface[] {
-    return [
-      {
-        question: 'What does CSS stand for?',
-        incorrectAnswers: [
-          'Computer Style Sheets',
-          'Creative Style Sheets',
-          'Colorful Style Sheets',
-        ],
-        correctAnswer: 'Cascading Style Sheets',
-      },
+  getQuestions(): Observable<QuestionInterface[]> {
+    const apiUrl =
+      'https://opentdb.com/api.php?amount=10&category=9&difficulty=easy&type=multiple';
 
-      {
-        question:
-          'Where in an HTML document is the correct place to refer to an external style sheet?',
-        incorrectAnswers: [
-          'In the <body> section',
-          'At the end of the document',
-          "You can't refer to an external style sheet",
-        ],
-        correctAnswer: 'In the <head> section',
-      },
-      {
-        question: 'Which HTML tag is used to define an internal style sheet?',
-        incorrectAnswers: ['<script>', '<headStyle>', '<css>'],
-        correctAnswer: '<style>',
-      },
-      {
-        question: 'Which HTML attribute is used to define inline styles?',
-        incorrectAnswers: ['class', 'font', 'styles'],
-        correctAnswer: 'style',
-      },
-      {
-        question: 'Which is the correct CSS syntax?',
-        incorrectAnswers: [
-          '{body:color=black;}',
-          '{body;color:black;}',
-          'body:color=black;',
-        ],
-        correctAnswer: 'body {color: black;}',
-      },
-      {
-        question: 'How do you insert a comment in a CSS file?',
-        incorrectAnswers: [
-          "' this is a comment",
-          '// this is a comment',
-          '// this is a comment //',
-        ],
-        correctAnswer: '/* this is a comment */',
-      },
-      {
-        question: 'Which property is used to change the background color?',
-        incorrectAnswers: ['color', 'bgcolor', 'bgColor'],
-        correctAnswer: 'background-color',
-      },
-      {
-        question: 'How do you add a background color for all <h1> elements?',
-        incorrectAnswers: [
-          'all.h1 {background-color:#FFFFFF;}',
-          'h1.setAll {background-color:#FFFFFF;}',
-          'h1.all {background-color:#FFFFFF;}',
-        ],
-        correctAnswer: 'h1 {background-color:#FFFFFF;}',
-      },
-    ];
+    return this.http
+      .get<{ results: BackendQuestionInterface[] }>(apiUrl)
+      .pipe(map((response) => this.parseQuestions(response.results)));
+  }
+
+  parseQuestions(
+    backendQuestions: BackendQuestionInterface[]
+  ): QuestionInterface[] {
+    return backendQuestions.map((backendQuestion) => {
+      const incorrectAnswers = backendQuestion.incorrect_answers.map(
+        (incorrectAnswers) => decodeURIComponent(incorrectAnswers)
+      );
+      return {
+        question: decodeURIComponent(backendQuestion.question),
+        correctAnswer: decodeURIComponent(backendQuestion.correct_answer),
+        incorrectAnswers,
+      };
+    });
   }
 }
