@@ -1,6 +1,10 @@
 <div class="quiz">
   <div>
-    <div class="score">Question 1/10</div>
+    <div class="score">
+      Question {{ quizzService.currentQuestionIndex() + 1 }}/{{
+        quizzService.questions().length
+      }}
+    </div>
     <app-question />
     <div class="next-button">Next question</div>
   </div>

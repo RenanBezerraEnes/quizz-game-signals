@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { QuestionComponent } from '../components/question/question.component';
+import { QuizzService } from './services/quizz.service';
 
 @Component({
   selector: 'app-quiz',
@@ -9,7 +10,7 @@ import { QuestionComponent } from '../components/question/question.component';
   styleUrls: ['./quiz.component.css'],
 })
 export class QuizComponent implements OnInit {
-  constructor() {}
+  quizzService = inject(QuizzService);
 
   ngOnInit() {}
 }
