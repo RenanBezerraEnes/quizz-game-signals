@@ -1,4 +1,12 @@
-<div class="answer" (click)="quizzService.selectAnswer(answerText())">
+<div
+  (click)="quizzService.selectAnswer(answerText())"
+  [ngClass]="{
+    answer: true,
+    'correct-answer': isCorrectAnswer(),
+    'wrong-answer': isWrongAnswer(),
+    'disabled-answer': !!this.quizzService.currentAnswer()
+  }"
+>
   <div class="answer-letter">{{ letterMapping[answerIndex()] }}</div>
   <div class="answer-text">{{ answerText() }}</div>
 </div>

@@ -1,10 +1,11 @@
-import { Component, inject, input } from '@angular/core';
+import { Component, computed, inject, input } from '@angular/core';
 import { QuizzService } from '../../quiz/services/quizz.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-answer',
   standalone: true,
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './answer.component.html',
   styleUrls: ['./answer.component.css'],
 })
@@ -15,4 +16,15 @@ export class AnswerComponent {
   quizzService = inject(QuizzService);
 
   letterMapping = ['A', 'B', 'C', 'D'];
+  isCorrectAnswer = computed(
+    () =>
+      !!this.quizzService.currentAnswer() &&
+      this.answerText() === this.quizzService.currentQuestion().correctAnswer
+  );
+
+  isWrongAnswer = computed(
+    () =>
+      this.answerText() === this.quizzService.currentAnswer() &&
+      this.answerText() !== this.quizzService.currentQuestion().correctAnswer
+  );
 }
