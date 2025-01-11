@@ -14,16 +14,13 @@ export class QuizComponent implements OnInit {
   quizzService = inject(QuizzService);
 
   ngOnInit(): void {
-    this.quizzService.getQuestions().subscribe((questions) => {
-      this.quizzService.questions.set(questions);
+    this.quizzService.getQuestions().subscribe({
+      next: (questions) => {
+        this.quizzService.questions.set(questions);
+      },
+      error: (error) => {
+        this.quizzService.error.set(error.message);
+      },
     });
   }
-
-  // loadingEffect() {
-  //   effect(() => {
-  //     this.quizzService.getQuestions().subscribe((questions) => {
-  //       this.quizzService.questions.set(questions);
-  //     });
-  //   });
-  // }
 }

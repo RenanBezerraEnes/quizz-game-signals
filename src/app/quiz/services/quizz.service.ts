@@ -15,6 +15,8 @@ export class QuizzService {
 
   correctAnswersCount = signal<number>(0);
 
+  error = signal<string | null>(null);
+
   currentQuestion = computed(
     () => this.questions()[this.currentQuestionIndex()]
   );
