@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
+import { QuizzService } from '../../quiz/services/quizz.service';
 
 @Component({
   selector: 'app-results',
@@ -7,6 +8,6 @@ import { Component, OnInit } from '@angular/core';
   templateUrl: './results.component.html',
   styleUrls: ['./results.component.css'],
 })
-export class ResultsComponent implements OnInit {
-  ngOnInit() {}
+export class ResultsComponent {
+  quizzService = inject(QuizzService);
 }

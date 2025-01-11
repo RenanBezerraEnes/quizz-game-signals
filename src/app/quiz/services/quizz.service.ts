@@ -1,14 +1,41 @@
 import { computed, Injectable, signal } from '@angular/core';
 import { QuestionInterface } from '../types/question.interface';
+import { sign } from 'crypto';
 
 @Injectable({ providedIn: 'root' })
 export class QuizzService {
   questions = signal<QuestionInterface[]>(this.getMockQuestions());
   currentQuestionIndex = signal<number>(0);
 
+  currentAnswer = signal<string | null>(null);
+
+  correctAnswersCount = signal<number>(0);
+
   currentQuestion = computed(
-    () => this.questions()[this.currentQuestionIndex()].question
+    () => this.questions()[this.currentQuestionIndex()]
   );
+
+  showResults = computed(
+    () => this.currentQuestionIndex() === this.questions().length - 1
+  );
+
+  isAtFirstQuestion = computed(() => this.currentQuestionIndex() === 0);
+
+  currentQuestionAnswers = computed(() =>
+    this.sortAnswers(this.currentQuestion())
+  );
+
+  sortAnswers(question: QuestionInterface): string[] {
+    const unshuffledAnswers = [
+      question.correctAnswer,
+      ...question.incorrectAnswers,
+    ];
+
+    return unshuffledAnswers
+      .map((a) => ({ sort: Math.random(), value: a }))
+      .sort((a, b) => a.sort - b.sort)
+      .map((a) => a.value);
+  }
 
   goToPreviousQuestion() {
     if (!this.isAtFirstQuestion()) {
@@ -21,17 +48,23 @@ export class QuizzService {
       ? this.currentQuestionIndex()
       : this.currentQuestionIndex() + 1;
     this.currentQuestionIndex.set(currentQuestionIndex);
+
+    this.currentAnswer.set(null);
+  }
+
+  selectAnswer(answer: string): void {
+    this.currentAnswer.set(answer);
+    const correctAnswersCount =
+      answer === this.currentQuestion().correctAnswer
+        ? this.correctAnswersCount() + 1
+        : this.correctAnswersCount();
+
+    this.correctAnswersCount.set(correctAnswersCount);
   }
 
   restart(): void {
     this.currentQuestionIndex.set(0);
   }
-
-  isAtFirstQuestion = computed(() => this.currentQuestionIndex() === 0);
-
-  showResults = computed(
-    () => this.currentQuestionIndex() === this.questions().length - 1
-  );
 
   getMockQuestions(): QuestionInterface[] {
     return [

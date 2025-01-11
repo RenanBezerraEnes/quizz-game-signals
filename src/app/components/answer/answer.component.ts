@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, input } from '@angular/core';
+import { QuizzService } from '../../quiz/services/quizz.service';
 
 @Component({
   selector: 'app-answer',
@@ -7,8 +8,11 @@ import { Component, OnInit } from '@angular/core';
   templateUrl: './answer.component.html',
   styleUrls: ['./answer.component.css'],
 })
-export class AnswerComponent implements OnInit {
-  constructor() {}
+export class AnswerComponent {
+  answerText = input.required<string>();
+  answerIndex = input.required<number>();
 
-  ngOnInit() {}
+  quizzService = inject(QuizzService);
+
+  letterMapping = ['A', 'B', 'C', 'D'];
 }

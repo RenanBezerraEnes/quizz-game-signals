@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { QuestionComponent } from '../components/question/question.component';
 import { QuizzService } from './services/quizz.service';
 import { ResultsComponent } from '../components/results/results.component';
@@ -10,8 +10,6 @@ import { ResultsComponent } from '../components/results/results.component';
   templateUrl: './quiz.component.html',
   styleUrls: ['./quiz.component.css'],
 })
-export class QuizComponent implements OnInit {
+export class QuizComponent {
   quizzService = inject(QuizzService);
-
-  ngOnInit() {}
 }
