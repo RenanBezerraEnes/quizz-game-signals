@@ -1,11 +1,12 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { QuestionComponent } from '../components/question/question.component';
 import { QuizzService } from './services/quizz.service';
+import { ResultsComponent } from '../components/results/results.component';
 
 @Component({
   selector: 'app-quiz',
   standalone: true,
-  imports: [QuestionComponent],
+  imports: [QuestionComponent, ResultsComponent],
   templateUrl: './quiz.component.html',
   styleUrls: ['./quiz.component.css'],
 })

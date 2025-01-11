@@ -10,6 +10,29 @@ export class QuizzService {
     () => this.questions()[this.currentQuestionIndex()].question
   );
 
+  goToPreviousQuestion() {
+    if (!this.isAtFirstQuestion()) {
+      this.currentQuestionIndex.set(this.currentQuestionIndex() - 1);
+    }
+  }
+
+  goToNextQuestion() {
+    const currentQuestionIndex = this.showResults()
+      ? this.currentQuestionIndex()
+      : this.currentQuestionIndex() + 1;
+    this.currentQuestionIndex.set(currentQuestionIndex);
+  }
+
+  restart(): void {
+    this.currentQuestionIndex.set(0);
+  }
+
+  isAtFirstQuestion = computed(() => this.currentQuestionIndex() === 0);
+
+  showResults = computed(
+    () => this.currentQuestionIndex() === this.questions().length - 1
+  );
+
   getMockQuestions(): QuestionInterface[] {
     return [
       {

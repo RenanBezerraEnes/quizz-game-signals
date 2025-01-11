@@ -1,4 +1,17 @@
 <div class="quiz">
+  @if (quizzService.showResults()) {
+  <div class="results">
+    <div class="congratulations">Congratulations!</div>
+    <div class="results-info">
+      <div>You have completed the quiz.</div>
+      <div>
+        <app-results />
+      </div>
+      <div class="next-button" (click)="quizzService.restart()">Restart</div>
+    </div>
+  </div>
+  } @else {
+
   <div>
     <div class="score">
       Question {{ quizzService.currentQuestionIndex() + 1 }}/{{
@@ -6,6 +19,14 @@
       }}
     </div>
     <app-question />
-    <div class="next-button">Next question</div>
+    <div class="buttons">
+      <div class="next-button" (click)="quizzService.goToPreviousQuestion()">
+        Back
+      </div>
+      <div class="next-button" (click)="quizzService.goToNextQuestion()">
+        Next question
+      </div>
+    </div>
   </div>
+  }
 </div>

@@ -4,6 +4,12 @@
   margin-top: 100px;
 }
 
+.buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 30px;
+}
+
 .score {
   background: #fff;
   color: 000;
